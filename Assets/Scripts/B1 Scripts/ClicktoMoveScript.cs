@@ -4,15 +4,20 @@ using System.Collections;
 
 public class ClicktoMoveScript : MonoBehaviour {
 
+	private Animator anim;
 	private NavMeshAgent navMeshAgent;
 	private Renderer matRender;
 	private Color origColor;
 	private Color highlightColor;
 	private bool isSelected;
+	private bool isWalking;
+	private bool isRunning;
+	private bool isJumping;
 	public DirectorController director;
 
 	// Use this for initialization
 	void Awake () {
+		anim = GetComponent<Animator> ();
 		navMeshAgent = GetComponent<NavMeshAgent> ();
 		matRender = GetComponent<Renderer> ();
 		origColor = matRender.material.color;
@@ -32,6 +37,11 @@ public class ClicktoMoveScript : MonoBehaviour {
 				RaycastHit hit;
 				if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit, 100)) {
 					navMeshAgent.destination = hit.point;
+					isWalking = true;
+					navMeshAgent.updatePosition = true;
+					navMeshAgent.updateRotation = true;
+					navMeshAgent.nextPosition = transform.position;
+					anim.SetBool ("isWalking", isWalking);
 				}
 			} else if (Vector3.Distance(transform.position,navMeshAgent.destination) < 1.0f) {
 				if (director.beginBrakes != true) {
@@ -54,9 +64,10 @@ public class ClicktoMoveScript : MonoBehaviour {
 	}
 
 	void OnMouseDown () {
-		if (!isSelected)
+		if (!isSelected) {
 			isSelected = true;
-		else
+		} else {
 			isSelected = false;
+		}
 	}
 }
