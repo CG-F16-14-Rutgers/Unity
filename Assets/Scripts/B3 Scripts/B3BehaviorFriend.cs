@@ -50,6 +50,12 @@ public class B3BehaviorFriend : MonoBehaviour
 		return RunStatus.Success;
 	}
 
+	protected RunStatus disableDoor()
+	{
+		Destroy (GameObject.FindGameObjectWithTag ("door"));
+		return RunStatus.Success;
+	}
+
 	protected Node BuildTreeBeginning()
 	{
 		//Needs some way to change the boolean beginning in BehaviorManager when beginning phase has ended
@@ -63,19 +69,23 @@ public class B3BehaviorFriend : MonoBehaviour
 		Func<RunStatus> endBegin = () => (this.endBeginning());
 		Node phaseChangeNode = new LeafInvoke (endBegin);
 
+		Func<RunStatus> doorDisabler = () => (this.disableDoor());
+		Node doorDisablerNode = new LeafInvoke (doorDisabler);
+
 		Node path = new DecoratorLoop (
 			new Sequence (
 				this.ST_ApproachAndWait (this.positionA),
 				this.ST_ApproachAndWait (this.positionB),
-				friend.GetComponent<BehaviorMecanim> ().Node_BodyAnimation (reachAnimationName, true),
+				friend.GetComponent<BehaviorMecanim> ().Node_HandAnimation (reachAnimationName, true),
 				new LeafWait(10000),
-				friend.GetComponent<BehaviorMecanim> ().Node_BodyAnimation (reachAnimationName, false),
+				friend.GetComponent<BehaviorMecanim> ().Node_HandAnimation (reachAnimationName, false),
 				this.ST_ApproachAndWait (this.positionC),
-				friend.GetComponent<BehaviorMecanim> ().Node_BodyAnimation (reachAnimationName, true),
+				friend.GetComponent<BehaviorMecanim> ().Node_HandAnimation (reachAnimationName, true),
 				new LeafWait(10000),
-				friend.GetComponent<BehaviorMecanim> ().Node_BodyAnimation (reachAnimationName, false),
+				doorDisablerNode,
+				friend.GetComponent<BehaviorMecanim> ().Node_HandAnimation (reachAnimationName, false),
 				phaseChangeNode));
-	
+
 		Node beginning = new DecoratorForceStatus(RunStatus.Success, new SequenceParallel(phaseNode, path));
 		return beginning;
 	}
