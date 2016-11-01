@@ -261,6 +261,9 @@ public class BodyMecanim : MonoBehaviour
             case "REACHRIGHT":
                 this.animator.SetBool("H_ReachRight", isActive);
                 break;
+			case "REACH":
+				this.animator.SetBool ("H_Reach", isActive);
+				break;
 			case "LOOKUP":
 				this.animator.SetBool("H_LookUp", isActive);
 				break;
@@ -417,6 +420,7 @@ public class BodyMecanim : MonoBehaviour
         this.animator.SetBool("H_WoodCut", false);
         this.animator.SetBool("H_CutThroat", false);
         this.animator.SetBool("H_ReachRight", false);
+		this.animator.SetBool ("H_Reach", false);
 		this.animator.SetBool ("H_LookUp", false);
 
         this.animator.SetBool("FaceAnimation", false);
