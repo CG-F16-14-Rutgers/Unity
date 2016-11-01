@@ -39,7 +39,7 @@ public class B3BehaviorDancer : MonoBehaviour
 
 		Val<Vector3> dancerPos = Val.V (() => this.dancer.transform.position);
 		Val<Vector3> friendPos = Val.V (() => this.friend.transform.position);
-		Func<bool> trigger = () => (Vector3.Distance(dancerPos.Value, friendPos.Value) < 5.0f);
+		Func<bool> trigger = () => (Vector3.Distance(dancerPos.Value, friendPos.Value) < 3.0f);
 		Node triggerNode = new DecoratorLoop(new LeafAssert (trigger));
 
 		Func<RunStatus> changeDance = () => (this.beginAndEndDance());

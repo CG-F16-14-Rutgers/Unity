@@ -58,7 +58,7 @@ public class B3BehaviorFriend : MonoBehaviour
 		Node phaseNode = new DecoratorLoop(new LeafAssert (act));
 
 		//Func<bool> changeStatus = () => (BehaviorManager.Instance.beginning = false);
-		Val<string> reachAnimationName = "BREAKDANCE";
+		Val<string> reachAnimationName = "REACH";
 
 		Func<RunStatus> endBegin = () => (this.endBeginning());
 		Node phaseChangeNode = new LeafInvoke (endBegin);
@@ -67,11 +67,15 @@ public class B3BehaviorFriend : MonoBehaviour
 			new Sequence (
 				this.ST_ApproachAndWait (this.positionA),
 				this.ST_ApproachAndWait (this.positionB),
+				friend.GetComponent<BehaviorMecanim> ().Node_BodyAnimation (reachAnimationName, true),
+				new LeafWait(10000),
+				friend.GetComponent<BehaviorMecanim> ().Node_BodyAnimation (reachAnimationName, false),
 				this.ST_ApproachAndWait (this.positionC),
 				friend.GetComponent<BehaviorMecanim> ().Node_BodyAnimation (reachAnimationName, true),
 				new LeafWait(10000),
 				friend.GetComponent<BehaviorMecanim> ().Node_BodyAnimation (reachAnimationName, false),
 				phaseChangeNode));
+	
 		Node beginning = new DecoratorForceStatus(RunStatus.Success, new SequenceParallel(phaseNode, path));
 		return beginning;
 	}
