@@ -34,12 +34,13 @@ public class B3BehaviorDancer : MonoBehaviour
 	{
 		print(Vector3.Distance(dancer.transform.position, friend.transform.position));
 		Val<bool> status = Val.V (() => BehaviorManager.Instance.middle);
+		Val<bool> danceStatus = Val.V (() => BehaviorManager.Instance.dance);
 		Func<bool> act = () => (status.Value == true);
 		Node phaseNode = new DecoratorLoop(new LeafAssert (act));
 
 		Val<Vector3> dancerPos = Val.V (() => this.dancer.transform.position);
 		Val<Vector3> friendPos = Val.V (() => this.friend.transform.position);
-		Func<bool> trigger = () => (Vector3.Distance(dancerPos.Value, friendPos.Value) < 3.0f);
+		Func<bool> trigger = () => (Vector3.Distance(dancerPos.Value, friendPos.Value) < 3.5f);
 		Node triggerNode = new DecoratorLoop(new LeafAssert (trigger));
 
 		Func<RunStatus> changeDance = () => (this.beginAndEndDance());
@@ -47,17 +48,14 @@ public class B3BehaviorDancer : MonoBehaviour
 
 		Val<string> danceName = "BREAKDANCE";
 
-		Node danceNode = new DecoratorLoop (
+		Node danceNode = 
 			new Sequence(
 				changeDanceNode,
 				new LeafWait(1000),
 				this.dancer.GetComponent<BehaviorMecanim>().Node_BodyAnimation(danceName, true),
-				new LeafWait(10000),
-				this.dancer.GetComponent<BehaviorMecanim>().Node_BodyAnimation(danceName, false),
-				new LeafWait(1000),
-				this.dancer.GetComponent<BehaviorMecanim>().Node_BodyAnimation("DYING", true),
-				new LeafWait(3000),
-				changeDanceNode));
+				new LeafWait(5000),
+				changeDanceNode,
+				this.dancer.GetComponent<BehaviorMecanim>().Node_BodyAnimation(danceName, false));
 
 		print ("Gets here");
 
