@@ -56,6 +56,7 @@ public class B3BehaviorFriend : MonoBehaviour
 		return RunStatus.Success;
 	}
 
+
 	protected Node BuildTreeBeginning()
 	{
 		//Needs some way to change the boolean beginning in BehaviorManager when beginning phase has ended
@@ -94,8 +95,8 @@ public class B3BehaviorFriend : MonoBehaviour
 	{
 		//Need to change middle bool when conditions met
 		Val<bool> status = Val.V (() => BehaviorManager.Instance.middle);
-		Func<bool> act = () => (status.Value == true);
-		Node phaseNode = new DecoratorLoop(new LeafAssert (act));
+		/*Func<bool> act = () => (status.Value == true);
+		Node phaseNode = new DecoratorLoop(new LeafAssert (act));*/
 
 		Val<bool> danceStatus = Val.V (() => BehaviorManager.Instance.dance);
 		Func<bool> checkDanceTrue = () => (danceStatus.Value == true && status.Value == true);
@@ -106,8 +107,9 @@ public class B3BehaviorFriend : MonoBehaviour
 		Node dance = new DecoratorLoop(
 			new Sequence(
 				friend.GetComponent<BehaviorMecanim> ().Node_BodyAnimation (danceAnimationName, true), 
-				new LeafWait(10000),
-				friend.GetComponent<BehaviorMecanim> ().Node_BodyAnimation (danceAnimationName, false)));
+				new LeafWait(5000),
+				friend.GetComponent<BehaviorMecanim> ().Node_BodyAnimation (danceAnimationName, false),
+				new LeafWait(5000)));
 		Node danceBattle = /*new DecoratorForceStatus (RunStatus.Success,*/ new SequenceParallel (danceTrueAssertNode, dance);
 
 		Func<RunStatus> endMiddle = () => (this.endMiddle());
@@ -121,7 +123,7 @@ public class B3BehaviorFriend : MonoBehaviour
 				phaseChangeNode));
 		Node escape = /*new DecoratorForceStatus(RunStatus.Success,*/ new SequenceParallel (danceFalseAssertNode, path);
 
-		Node middle = new DecoratorForceStatus(RunStatus.Success, new SelectorParallel (phaseNode, danceBattle, escape));
+		Node middle = new DecoratorForceStatus(RunStatus.Success, new SelectorParallel (danceBattle, escape));
 		return middle;
 	}
 
