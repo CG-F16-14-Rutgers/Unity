@@ -30,10 +30,12 @@ public class B3BehaviorFriend : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		if (alive) {
 			if (Vector3.Distance (cop.transform.position, friend.transform.position) < 1.0f) {
 				alive = false;
 				animator.Play ("Dying");
 			}
+		}
 	}
 
 	protected Node ST_ApproachAndWait(Transform target)
