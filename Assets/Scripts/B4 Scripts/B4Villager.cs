@@ -35,19 +35,19 @@ public class B4Villager : MonoBehaviour {
 	}
 
 	protected Node BuildTreeType1(int villagerIndex) {
-		Node path = new Sequence (this.ST_Approach(positionA, villagerIndex),this.ST_Approach(positionB, villagerIndex));
+		Node path = new SequenceShuffle (this.ST_Approach(positionA, villagerIndex),this.ST_Approach(positionC, villagerIndex));
 		Node root = new DecoratorLoop (path);
 		return root;
 	}
 
 	protected Node BuildTreeType2(int villagerIndex) {
-		Node path = new Sequence (this.ST_Approach(positionB, villagerIndex),this.ST_Approach(positionA, villagerIndex));
+		Node path = new SequenceShuffle (this.ST_Approach(positionB, villagerIndex),this.ST_Approach(positionD, villagerIndex));
 		Node root = new DecoratorLoop (path);
 		return root;
 	}
 
 	protected Node BuildTreeType3(int villagerIndex) {
-		Node path = new Sequence (this.ST_Approach(positionC, villagerIndex),this.ST_Approach(positionB, villagerIndex));
+		Node path = new SequenceShuffle (this.ST_Approach(positionA, villagerIndex),this.ST_Approach(positionB, villagerIndex));
 		Node root = new DecoratorLoop (path);
 		return root;
 	}
