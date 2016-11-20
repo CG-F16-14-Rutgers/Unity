@@ -37,10 +37,12 @@ public class B3BehaviorVictim : MonoBehaviour
 		Func<bool> act = () => (status.Value == true);
 		Node phaseNode = new DecoratorLoop(new LeafAssert (act));
 
+		Node shock = new Sequence(victim.GetComponent<BehaviorMecanim> ().Node_HandAnimation ("SHOCK", true), new LeafWait(5000), victim.GetComponent<BehaviorMecanim> ().Node_HandAnimation ("SHOCK", false));
+
 		Node path = new DecoratorLoop (
 			new SequenceShuffle(
 				this.ST_ApproachAndWait(this.positionA),
-				new LeafWait(1000),
+				shock,
 				this.ST_ApproachAndWait(this.positionB)));
 		return new DecoratorForceStatus(RunStatus.Success, new SequenceParallel(phaseNode, path));
 	}
@@ -52,8 +54,15 @@ public class B3BehaviorVictim : MonoBehaviour
 		Func<bool> act = () => (statusMid.Value == true || statusEnd.Value == true);
 		Node phaseNode = new DecoratorLoop(new LeafAssert (act));
 
+		Node crowdPump = new Sequence (victim.GetComponent<BehaviorMecanim> ().Node_HandAnimation ("CROWDPUMP", true), new LeafWait (6300), victim.GetComponent<BehaviorMecanim> ().Node_HandAnimation ("CROWDPUMP", false));
+
+		Node chestPump = new Sequence (victim.GetComponent<BehaviorMecanim> ().Node_HandAnimation ("CHESTPUMPSALUTE", true), new LeafWait (5300), victim.GetComponent<BehaviorMecanim> ().Node_HandAnimation ("CHESTPUMPSALUTE", false));
+
+		Node middleCelebration = new SelectorShuffle (crowdPump,chestPump);
+
 		Node path = new DecoratorLoop (
-			new SequenceShuffle(
+			new Sequence(
+				middleCelebration,
 				this.ST_ApproachAndWait(this.positionC)));
 		return new DecoratorForceStatus (RunStatus.Success, new SequenceParallel (phaseNode, path));
 	}

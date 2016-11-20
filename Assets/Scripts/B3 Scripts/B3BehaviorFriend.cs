@@ -10,33 +10,68 @@ public class B3BehaviorFriend : MonoBehaviour
 	public Transform positionC;
 	public Transform positionD;
 
-	public GameObject friend;
+	public GameObject cop;
 
-	private BehaviorAgent behaviorAgent;
+	private Animator animator;
+
+	protected bool pickedUpKey = false;
+	protected bool alive = true;
+	//private BehaviorAgent behaviorAgent;
 
 	// Use this for initialization
 	void Start ()
 	{
-		behaviorAgent = new BehaviorAgent (this.BuildTreeRoot ());
+		/*behaviorAgent = new BehaviorAgent (this.BuildTreeRoot ());
 		BehaviorManager.Instance.Register (behaviorAgent);
-		behaviorAgent.StartBehavior ();
+		behaviorAgent.StartBehavior ();*/
+		this.animator = this.GetComponent<Animator> ();
 	}
 
 	// Update is called once per frame
 	void Update ()
 	{
+		if (alive) {
+			if (Vector3.Distance (cop.transform.position, this.transform.position) < 1.0f) {
+				alive = false;
+				this.animator.Play ("Dying");
+			}
+			if (Input.GetKey (KeyCode.LeftArrow) || Input.GetKey (KeyCode.UpArrow) || Input.GetKey (KeyCode.DownArrow) || Input.GetKey (KeyCode.RightArrow)) { 
+				float horizontalArrow = Input.GetAxis ("Horizontal");
+				float verticalArrow = Input.GetAxis ("Vertical");
+				Vector3 rotation = new Vector3 (0, horizontalArrow * 3, 0);
+				this.transform.Rotate (rotation);
 
+				Vector3 inputMovement = new Vector3 (0.0f, 0.0f, verticalArrow);
+				this.transform.Translate (inputMovement * Time.deltaTime * 7);
+				this.animator.SetFloat ("Speed", 1);
+			} else {
+				this.animator.SetFloat ("Speed", 0);
+			}
+			if (BehaviorManager.Instance.beginning == true) {
+				if (pickedUpKey == false && (Vector3.Distance (this.transform.position, this.positionB.transform.position) < 1.0f)) {
+					this.animator.Play ("Ground_Pickup_Right");
+					this.pickedUpKey = true;
+				} else if (pickedUpKey == true && (Vector3.Distance (this.transform.position, this.positionC.transform.position) < 1.0f)) {
+					this.animator.Play ("Reach");
+					BehaviorManager.Instance.beginning = false;
+					BehaviorManager.Instance.middle = true;
+				}
+			} else if (BehaviorManager.Instance.middle == true) {
+				if (BehaviorManager.Instance.dance == true) {
+					this.animator.Play ("BD1");
+				}
+			}
+		}
 	}
 
-	protected Node ST_ApproachAndWait(Transform target)
+	/*protected Node ST_ApproachAndWait(Transform target)
 	{
 		Val<Vector3> position = Val.V (() => target.position);
 		return new Sequence( friend.GetComponent<BehaviorMecanim>().Node_GoTo(position), new LeafWait(1000));
-	}
+	}*/
 
-	protected RunStatus endBeginning()
+	/*protected RunStatus endBeginning()
 	{
-		print ("phase changed");
 		BehaviorManager.Instance.changeBeginning ();
 		BehaviorManager.Instance.changeMiddle ();
 		return RunStatus.Success;
@@ -44,7 +79,6 @@ public class B3BehaviorFriend : MonoBehaviour
 
 	protected RunStatus endMiddle()
 	{
-		print ("phase changed");
 		BehaviorManager.Instance.changeMiddle ();
 		BehaviorManager.Instance.changeEnd ();
 		return RunStatus.Success;
@@ -57,7 +91,7 @@ public class B3BehaviorFriend : MonoBehaviour
 	}
 
 
-	protected Node BuildTreeBeginning()
+	/*protected Node BuildTreeBeginning()
 	{
 		//Needs some way to change the boolean beginning in BehaviorManager when beginning phase has ended
 		Val<bool> status = Val.V (() => BehaviorManager.Instance.beginning);
@@ -96,7 +130,7 @@ public class B3BehaviorFriend : MonoBehaviour
 		//Need to change middle bool when conditions met
 		Val<bool> status = Val.V (() => BehaviorManager.Instance.middle);
 		/*Func<bool> act = () => (status.Value == true);
-		Node phaseNode = new DecoratorLoop(new LeafAssert (act));*/
+		Node phaseNode = new DecoratorLoop(new LeafAssert (act));*//*
 
 		Val<bool> danceStatus = Val.V (() => BehaviorManager.Instance.dance);
 		Func<bool> checkDanceTrue = () => (danceStatus.Value == true && status.Value == true);
@@ -110,7 +144,7 @@ public class B3BehaviorFriend : MonoBehaviour
 				new LeafWait(5000),
 				friend.GetComponent<BehaviorMecanim> ().Node_BodyAnimation (danceAnimationName, false),
 				new LeafWait(5000)));
-		Node danceBattle = /*new DecoratorForceStatus (RunStatus.Success,*/ new SequenceParallel (danceTrueAssertNode, dance);
+		Node danceBattle = /*new DecoratorForceStatus (RunStatus.Success,*//* new SequenceParallel (danceTrueAssertNode, dance);
 
 		Func<RunStatus> endMiddle = () => (this.endMiddle());
 		Node phaseChangeNode = new LeafInvoke (endMiddle);
@@ -121,7 +155,7 @@ public class B3BehaviorFriend : MonoBehaviour
 			new Sequence (
 				this.ST_ApproachAndWait (this.positionD),
 				phaseChangeNode));
-		Node escape = /*new DecoratorForceStatus(RunStatus.Success,*/ new SequenceParallel (danceFalseAssertNode, path);
+		Node escape = /*new DecoratorForceStatus(RunStatus.Success,*//* new SequenceParallel (danceFalseAssertNode, path);
 
 		Node middle = new DecoratorForceStatus(RunStatus.Success, new SelectorParallel (danceBattle, escape));
 		return middle;
@@ -147,5 +181,5 @@ public class B3BehaviorFriend : MonoBehaviour
 	{
 		Node root = new DecoratorLoop (new DecoratorForceStatus(RunStatus.Success, new SequenceParallel (this.BuildTreeBeginning (), this.BuildTreeMiddle (), this.BuildTreeEnd())));
 		return root;
-	}
+	}*/
 }

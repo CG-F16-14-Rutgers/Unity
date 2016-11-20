@@ -6,9 +6,7 @@ using TreeSharpPlus;
 public class B3BehaviorInformant : MonoBehaviour
 {
 	public GameObject friend;
-	public GameObject informant;
 
-	private bool isMoving = false;
 	private Animator animator;
 	// Use this for initialization
 	void Start ()
@@ -19,18 +17,19 @@ public class B3BehaviorInformant : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		float horizontalArrow = Input.GetAxis ("Horizontal");
-		float verticalArrow = Input.GetAxis ("Vertical");
-		Vector3 inputMovement = new Vector3 (horizontalArrow, 0.0f, verticalArrow);
-		this.transform.position += inputMovement * Time.deltaTime * 5.0f;
-		if (horizontalArrow != 0 || verticalArrow != 0 && isMoving == false) {
-			this.animator.Play ("WalkRun");
-			this.isMoving = true;
+		if(Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.RightArrow)) { 
+			float horizontalArrow = Input.GetAxis ("Horizontal");
+			float verticalArrow = Input.GetAxis ("Vertical");
+			Vector3 rotation = new Vector3 (0, horizontalArrow*3, 0);
+			this.transform.Rotate (rotation);
+
+			Vector3 inputMovement = new Vector3 (0.0f, 0.0f, verticalArrow);
+			this.transform.Translate (inputMovement*Time.deltaTime*7);
+			this.animator.SetFloat ("Speed", 1);
 		} else {
-			this.animator.Play ("Idle");
-			this.isMoving = false;
+			this.animator.SetFloat ("Speed", 0);
 		}
-		if (Vector3.Distance (this.informant.transform.position, this.friend.transform.position) < 2.0f) {
+		if (Vector3.Distance (this.transform.position, this.friend.transform.position) < 2.0f) {
 			BehaviorManager.Instance.beginning = true;
 		}
 	}

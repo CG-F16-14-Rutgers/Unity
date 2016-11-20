@@ -19,7 +19,7 @@ public interface IBehaviorUpdate
 public class BehaviorManager
 {
 	private static BehaviorManager instance = null;
-	public bool beginning = false;
+	public bool beginning = true;
 	public bool middle = false;
 	public bool end = false;
 	public bool dance = false;
