@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using TreeSharpPlus;
 
-public class B3BehaviorCop : MonoBehaviour
+public class B4BehaviorCop : MonoBehaviour
 {
 	public Transform positionA;
 	public Transform positionB;
@@ -29,7 +29,7 @@ public class B3BehaviorCop : MonoBehaviour
 	}
 
 	bool checkForCriminals () {
-		if (Vector3.Distance (cop.transform.position, friend.transform.position) < 4.0f) {
+		if (Vector3.Distance (cop.transform.position, friend.transform.position) < 7.0f) {
 			return true;
 		} else {
 			return false;

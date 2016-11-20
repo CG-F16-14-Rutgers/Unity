@@ -19,7 +19,7 @@ public interface IBehaviorUpdate
 public class BehaviorManager
 {
 	private static BehaviorManager instance = null;
-	public bool beginning = true;
+	public bool beginning = false;
 	public bool middle = false;
 	public bool end = false;
 	public bool dance = false;
@@ -53,9 +53,11 @@ public class BehaviorManager
 	// every time we do a behavior update
 	public void Update(float updateTime)
 	{
+		if(end != true) {
 		for (int i = this.receivers.Count - 1; i >= 0; i--)
 			if (this.receivers[i].BehaviorUpdate(updateTime) != RunStatus.Running)
 				this.receivers.RemoveAt(i);
+		}
 	}
 
 	/// <summary>
